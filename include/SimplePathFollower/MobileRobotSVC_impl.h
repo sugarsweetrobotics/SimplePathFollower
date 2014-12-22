@@ -14,6 +14,8 @@
 #ifndef MOBILEROBOTSVC_IMPL_H
 #define MOBILEROBOTSVC_IMPL_H
  
+
+class SimplePathFollower;
 /*!
  * @class PathFollowerSVC_impl
  * Example class implementing IDL interface RTC::PathFollower
@@ -26,6 +28,7 @@ class PathFollowerSVC_impl
    // Make sure all instances are built on the heap by making the
    // destructor non-public
    //virtual ~PathFollowerSVC_impl();
+	 SimplePathFollower* m_pRTC;
 
  public:
   /*!
@@ -39,6 +42,11 @@ class PathFollowerSVC_impl
 
    // attributes and operations
    RTC::RETURN_VALUE followPath(const RTC::Path2D& path);
+
+   
+   void setRTC(SimplePathFollower* pRTC) {
+	 m_pRTC = pRTC;
+   }
 
 };
 

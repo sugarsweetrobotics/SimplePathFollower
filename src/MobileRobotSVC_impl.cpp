@@ -7,6 +7,8 @@
 
 #include "MobileRobotSVC_impl.h"
 
+#include "SimplePathFollower.h"
+
 /*
  * Example implementational code for IDL interface RTC::PathFollower
  */
@@ -29,9 +31,10 @@ RTC::RETURN_VALUE PathFollowerSVC_impl::followPath(const RTC::Path2D& path)
 {
 	RTC::RETURN_VALUE result;
   // Please insert your code here and remove the following warning pragma
-#ifndef WIN32
-  #warning "Code missing in function <RTC::RETURN_VALUE PathFollowerSVC_impl::followPath(const RTC::Path2D& path)>"
-#endif
+
+
+	m_pRTC->setPath(path);
+	m_pRTC->startFollow();
   return result;
 }
 

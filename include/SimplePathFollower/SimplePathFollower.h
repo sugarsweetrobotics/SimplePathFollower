@@ -10,11 +10,6 @@
 #ifndef SIMPLEPATHFOLLOWER_H
 #define SIMPLEPATHFOLLOWER_H
 
-#include <rtm/Manager.h>
-#include <rtm/DataFlowComponentBase.h>
-#include <rtm/CorbaPort.h>
-#include <rtm/DataInPort.h>
-#include <rtm/DataOutPort.h>
 #include <rtm/idl/BasicDataTypeSkel.h>
 #include <rtm/idl/ExtendedDataTypesSkel.h>
 #include <rtm/idl/InterfaceDataTypesSkel.h>
@@ -23,6 +18,12 @@
 // <rtc-template block="service_impl_h">
 #include "MobileRobotSVC_impl.h"
 
+
+#include <rtm/Manager.h>
+#include <rtm/DataFlowComponentBase.h>
+#include <rtm/CorbaPort.h>
+#include <rtm/DataInPort.h>
+#include <rtm/DataOutPort.h>
 // </rtc-template>
 
 // Service Consumer stub headers
@@ -32,6 +33,7 @@
 
 using namespace RTC;
 
+#include "SimpleFollower.h"
 /*!
  * @class SimplePathFollower
  * @brief Simple Algorithm Path Follower
@@ -235,13 +237,51 @@ class SimplePathFollower
    * - Name:  directionGain
    * - DefaultValue: 1.0
    */
-  float m_directionGain;
+  float m_distanceToTranslationGain;
   /*!
    * 
    * - Name:  distanceGain
    * - DefaultValue: 1.0
    */
-  float m_distanceGain;
+  float m_distanceToRotationGain;
+
+  /*!
+   * 
+   * - Name:  directionGain
+   * - DefaultValue: 1.0
+   */
+  float m_directionToTranslationGain;
+  /*!
+   * 
+   * - Name:  distanceGain
+   * - DefaultValue: 1.0
+   */
+  float m_directionToRotationGain;
+  /*!
+   * 
+   * - Name:  directionGain
+   * - DefaultValue: 1.0
+   */
+  float m_approachDistanceGain;
+  /*!
+   * 
+   * - Name:  distanceGain
+   * - DefaultValue: 1.0
+   */
+  float m_approachDirectionGain;
+  /*!
+   * 
+   * - Name:  directionGain
+   * - DefaultValue: 1.0
+   */
+  float m_maxVelocity;
+  /*!
+   * 
+   * - Name:  distanceGain
+   * - DefaultValue: 1.0
+   */
+  float m_minVelocity;
+
 
   // </rtc-template>
 
@@ -265,6 +305,13 @@ class SimplePathFollower
   /*!
    */
   OutPort<RTC::TimedVelocity2D> m_velocityOut;
+  
+  enum __path_follower_state {
+    STATE_HALT,
+    STATE_FOLLOWING,
+    STATE_OUTOFRANGE,
+    STATE_ERROR,
+  };
   
   // </rtc-template>
 
@@ -298,6 +345,18 @@ class SimplePathFollower
   
   // </rtc-template>
 
+  bool m_poseUpdated;
+  SimpleFollower m_pathFollowerObj;
+
+public:
+
+  void startFollow() {
+    m_pathFollowerObj.startFollow(m_path);
+  }
+
+  void setPath(const RTC::Path2D& path) {
+	  this->m_path = path;
+  }
 };
 
 

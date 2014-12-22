@@ -1,4 +1,4 @@
-set(comp_srcs SimplePathFollower.cpp MobileRobotSVC_impl.cpp )
+set(comp_srcs SimplePathFollower.cpp MobileRobotSVC_impl.cpp SimpleFollower.cpp)
 set(standalone_srcs SimplePathFollowerComp.cpp)
 
 if (DEFINED OPENRTM_INCLUDE_DIRS)

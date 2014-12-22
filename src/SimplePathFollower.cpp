@@ -26,8 +26,14 @@ static const char* simplepathfollower_spec[] =
     "lang_type",         "compile",
     // Configuration variables
     "conf.default.debug", "0",
-    "conf.default.directionGain", "1.0",
-    "conf.default.distanceGain", "1.0",
+    "conf.default.directionToTranslationGain", "2.0",
+    "conf.default.distanceToTranslationGain", "2.0",
+    "conf.default.directionToRotationGain", "2.5",
+    "conf.default.distanceToRotationGain", "2.5",
+    "conf.default.approachDistanceGain", "0.5",
+    "conf.default.approachDirectionGain", "0.5",
+    "conf.default.maxVelocity", "0.5",
+    "conf.default.minVelocity", "0.2",
     // Widget
     "conf.__widget__.debug", "text",
     "conf.__widget__.directionGain", "text",
@@ -46,8 +52,8 @@ SimplePathFollower::SimplePathFollower(RTC::Manager* manager)
   : RTC::DataFlowComponentBase(manager),
     m_pathIn("path", m_path),
     m_currentPoseIn("currentPose", m_currentPose),
-    m_velocityOut("velocity", m_velocity),
-    m_PathFollowerPort("PathFollower")
+    m_velocityOut("velocity", m_velocity)
+    ,m_PathFollowerPort("PathFollower")
 
     // </rtc-template>
 {
@@ -69,7 +75,6 @@ RTC::ReturnCode_t SimplePathFollower::onInitialize()
   // Set InPort buffers
   addInPort("path", m_pathIn);
   addInPort("currentPose", m_currentPoseIn);
-  
   // Set OutPort buffer
   addOutPort("velocity", m_velocityOut);
   
@@ -80,14 +85,21 @@ RTC::ReturnCode_t SimplePathFollower::onInitialize()
   
   // Set CORBA Service Ports
   addPort(m_PathFollowerPort);
+  m_pathFollower.setRTC(this);
   
   // </rtc-template>
 
   // <rtc-template block="bind_config">
   // Bind variables and configuration variable
   bindParameter("debug", m_debug, "0");
-  bindParameter("directionGain", m_directionGain, "1.0");
-  bindParameter("distanceGain", m_distanceGain, "1.0");
+  bindParameter("directionToTranslationGain", m_directionToTranslationGain, "1.0");
+  bindParameter("distanceToTranslationGain", m_distanceToTranslationGain, "1.0");
+  bindParameter("directionToRotationGain", m_directionToRotationGain, "1.0");
+  bindParameter("distanceToRotationGain", m_distanceToRotationGain, "1.0");
+  bindParameter("maxVelocity", m_maxVelocity, "1.0");
+  bindParameter("minVelocity", m_minVelocity, "1.0");
+  bindParameter("approachDirectionGain", m_approachDirectionGain, "1.0");
+  bindParameter("approachDistanceGain", m_approachDistanceGain, "1.0");
   // </rtc-template>
   
   return RTC::RTC_OK;
@@ -117,6 +129,7 @@ RTC::ReturnCode_t SimplePathFollower::onShutdown(RTC::UniqueId ec_id)
 
 RTC::ReturnCode_t SimplePathFollower::onActivated(RTC::UniqueId ec_id)
 {
+  m_poseUpdated = FALSE;
   return RTC::RTC_OK;
 }
 
@@ -129,6 +142,32 @@ RTC::ReturnCode_t SimplePathFollower::onDeactivated(RTC::UniqueId ec_id)
 
 RTC::ReturnCode_t SimplePathFollower::onExecute(RTC::UniqueId ec_id)
 {
+  if (m_currentPoseIn.isNew()) {
+    m_currentPoseIn.read();
+    m_poseUpdated = TRUE;
+  }
+
+  if (m_pathIn.isNew()) {
+    m_pathIn.read();
+	startFollow();
+  }
+
+  if(m_pathFollowerObj.isFollowing()) {
+    m_pathFollowerObj.setGain(m_maxVelocity, m_minVelocity,
+			      m_distanceToTranslationGain, m_directionToTranslationGain,
+			      m_distanceToRotationGain, m_directionToRotationGain,
+			      m_approachDistanceGain, m_approachDirectionGain);
+			      
+    if (m_poseUpdated) {
+      m_pathFollowerObj.setCurrentPose(m_currentPose.data);
+      m_pathFollowerObj.follow();
+      m_pathFollowerObj.getTargetVelocity(m_velocity.data);
+      setTimestamp(m_velocity);
+      m_velocityOut.write();
+      m_poseUpdated = FALSE;
+    }
+  }
+
   return RTC::RTC_OK;
 }
 
