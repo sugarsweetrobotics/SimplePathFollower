@@ -29,12 +29,23 @@ PathFollowerSVC_impl::~PathFollowerSVC_impl()
  */
 RTC::RETURN_VALUE PathFollowerSVC_impl::followPath(const RTC::Path2D& path)
 {
-	RTC::RETURN_VALUE result;
+  RTC::RETURN_VALUE result = RETVAL_OK;
   // Please insert your code here and remove the following warning pragma
 
+  
+  m_pRTC->setPath(path);
+  m_pRTC->startFollow();
 
-	m_pRTC->setPath(path);
-	m_pRTC->startFollow();
+  while(!m_pRTC->isGoal()) {
+    coil::usleep(1000*100);
+
+    if (m_pRTC->getMode() == MODE_TIMEOUT) {
+      //return RTC::RETVAL_TIMEOUT;
+      return result;
+    }
+  }
+
+  
   return result;
 }
 

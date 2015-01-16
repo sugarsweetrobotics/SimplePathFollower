@@ -34,6 +34,7 @@ static const char* simplepathfollower_spec[] =
     "conf.default.approachDirectionGain", "0.5",
     "conf.default.maxVelocity", "0.5",
     "conf.default.minVelocity", "0.2",
+    "conf.default.poseTimeout", "3.0",
     // Widget
     "conf.__widget__.debug", "text",
     "conf.__widget__.directionGain", "text",
@@ -100,6 +101,7 @@ RTC::ReturnCode_t SimplePathFollower::onInitialize()
   bindParameter("minVelocity", m_minVelocity, "1.0");
   bindParameter("approachDirectionGain", m_approachDirectionGain, "1.0");
   bindParameter("approachDistanceGain", m_approachDistanceGain, "1.0");
+  bindParameter("poseTimeout", m_poseTimeout, "3.0");
   // </rtc-template>
   
   return RTC::RTC_OK;
@@ -130,6 +132,8 @@ RTC::ReturnCode_t SimplePathFollower::onShutdown(RTC::UniqueId ec_id)
 RTC::ReturnCode_t SimplePathFollower::onActivated(RTC::UniqueId ec_id)
 {
   m_poseUpdated = FALSE;
+  m_Mode = MODE_NORMAL;
+  m_lastReceivedTime = coil::gettimeofday();
   return RTC::RTC_OK;
 }
 
@@ -142,15 +146,25 @@ RTC::ReturnCode_t SimplePathFollower::onDeactivated(RTC::UniqueId ec_id)
 
 RTC::ReturnCode_t SimplePathFollower::onExecute(RTC::UniqueId ec_id)
 {
+
+  coil::TimeValue currentTime = coil::gettimeofday();
   if (m_currentPoseIn.isNew()) {
     m_currentPoseIn.read();
     m_poseUpdated = TRUE;
+
+    m_lastReceivedTime = currentTime;
+  } else {
+    double duration = currentTime - m_lastReceivedTime;
+    if (duration > m_poseTimeout && m_poseTimeout > 0) {
+      m_Mode = MODE_TIMEOUT;
+    }
   }
 
+  /*
   if (m_pathIn.isNew()) {
     m_pathIn.read();
 	startFollow();
-  }
+	}*/
 
   if(m_pathFollowerObj.isFollowing()) {
     m_pathFollowerObj.setGain(m_maxVelocity, m_minVelocity,

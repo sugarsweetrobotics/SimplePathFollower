@@ -34,6 +34,14 @@
 using namespace RTC;
 
 #include "SimpleFollower.h"
+
+
+enum SIMPLE_PATH_FOLLOWER_MODE {
+  MODE_NORMAL,
+  MODE_TIMEOUT,
+};
+
+
 /*!
  * @class SimplePathFollower
  * @brief Simple Algorithm Path Follower
@@ -281,7 +289,11 @@ class SimplePathFollower
    * - DefaultValue: 1.0
    */
   float m_minVelocity;
-
+  /*!
+   *
+   *
+   */
+  float m_poseTimeout;
 
   // </rtc-template>
 
@@ -355,7 +367,18 @@ public:
   }
 
   void setPath(const RTC::Path2D& path) {
-	  this->m_path = path;
+    this->m_path = path;
+  }
+
+  coil::TimeValue m_lastReceivedTime;
+
+  SIMPLE_PATH_FOLLOWER_MODE m_Mode;
+
+public:
+  SIMPLE_PATH_FOLLOWER_MODE getMode() {return m_Mode;}
+
+  bool isGoal() {
+    return m_pathFollowerObj.isGoal();
   }
 };
 
