@@ -51,6 +51,7 @@ static std::ofstream fout;
 void SimpleFollower::startFollow(Path2D& path)
 {
 
+	m_goal = false;
   m_targetPath = path;
   m_following = true;
   m_StartPointIndex = 0;

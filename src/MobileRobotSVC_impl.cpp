@@ -32,6 +32,7 @@ RTC::RETURN_VALUE PathFollowerSVC_impl::followPath(const RTC::Path2D& path)
   RTC::RETURN_VALUE result = RETVAL_OK;
   // Please insert your code here and remove the following warning pragma
 
+  std::cout << "[RTC::SimplePathFollower] Start Following" << std::endl;
   
   m_pRTC->setPath(path);
   m_pRTC->startFollow();
@@ -40,11 +41,12 @@ RTC::RETURN_VALUE PathFollowerSVC_impl::followPath(const RTC::Path2D& path)
     coil::usleep(1000*100);
 
     if (m_pRTC->getMode() == MODE_TIMEOUT) {
-      //return RTC::RETVAL_TIMEOUT;
-      return result;
+        std::cout << "[RTC::SimplePathFollower] Current Pose Timeout" << std::endl;
+        return RTC::RETURN_VALUE::RETVAL_CURRENT_POSE_TIME_OUT;
     }
   }
-
+ 
+  std::cout << "[RTC::SimplePathFollower] Goal Reached." << std::endl;
   
   return result;
 }
