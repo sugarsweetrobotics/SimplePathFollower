@@ -174,7 +174,7 @@ RTC::ReturnCode_t SimplePathFollower::onExecute(RTC::UniqueId ec_id)
 
 			if (true) {
 				static int i = 0;
-				if(i++ % 10 == 0) {
+				if(i++ % 30 == 0) {
 					std::cout << "[RTC::SimplePathFollower] Now Following." << std::endl;
 					std::cout << "[RTC::SimplePathFollower] Current Pose (" << m_currentPose.data.position.x << ", "
 						<< m_currentPose.data.position.y << ", "
@@ -185,12 +185,25 @@ RTC::ReturnCode_t SimplePathFollower::onExecute(RTC::UniqueId ec_id)
 
 
 			m_pathFollowerObj.setCurrentPose(m_currentPose.data);
-			m_pathFollowerObj.follow();
+			FOLLOW_RESULT ret = m_pathFollowerObj.follow();
+
+			if (ret == FOLLOW_RESULT::FOLLOW_DISTANCEOUTOFRANGE) {
+				m_Mode = MODE_OUTOFRANGE;
+				m_pathFollowerObj.stopFollow();
+			}
+
+			if(m_pathFollowerObj.isGoal()) 
+			{
+				m_pathFollowerObj.stopFollow();
+				m_Mode = MODE_GOALED;
+			}
+
+
 			m_pathFollowerObj.getTargetVelocity(m_velocity.data);
 			
 			if (true) {
-				static int i = 0;
-				if(++i % 10 == 0) {
+				static int j = 0;
+				if(++j % 30 == 0) {
 					std::cout << "[RTC::SimplePathFollower] Target Velocity (" << m_velocity.data.vx << ", "
 						<< m_velocity.data.vy << ", "
 						<< m_velocity.data.va << ")" << std::endl;

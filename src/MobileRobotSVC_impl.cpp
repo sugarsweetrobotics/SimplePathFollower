@@ -34,19 +34,27 @@ RTC::RETURN_VALUE PathFollowerSVC_impl::followPath(const RTC::Path2D& path)
 
   std::cout << "[RTC::SimplePathFollower] Start Following" << std::endl;
   
-  m_pRTC->setPath(path);
-  m_pRTC->startFollow();
+  if(path.waypoints.length() == 0){ 
+	  m_pRTC->stopFollow();
+  } else {
+	  m_pRTC->setPath(path);
+	  m_pRTC->startFollow();
 
-  while(!m_pRTC->isGoal()) {
-    coil::usleep(1000*100);
+	  while(!m_pRTC->isGoal()) {
+		coil::usleep(1000*100);
 
-    if (m_pRTC->getMode() == MODE_TIMEOUT) {
-        std::cout << "[RTC::SimplePathFollower] Current Pose Timeout" << std::endl;
-        return RTC::RETURN_VALUE::RETVAL_CURRENT_POSE_TIME_OUT;
-    }
-  }
+		if (m_pRTC->getMode() == MODE_TIMEOUT) {
+			std::cout << "[RTC::SimplePathFollower] Current Pose Timeout" << std::endl;
+			return RTC::RETURN_VALUE::RETVAL_CURRENT_POSE_TIME_OUT;
+		} else if (m_pRTC->getMode() == MODE_OUTOFRANGE) {
+			std::cout << "[RTC::SimplePathFollower] OutOfRange" << std::endl;
+			return RTC::RETURN_VALUE::RETVAL_UNKNOWN_ERROR;
+			}
+
+	  }
  
-  std::cout << "[RTC::SimplePathFollower] Goal Reached." << std::endl;
+	  std::cout << "[RTC::SimplePathFollower] Goal Reached." << std::endl;
+  }
   
   return result;
 }
