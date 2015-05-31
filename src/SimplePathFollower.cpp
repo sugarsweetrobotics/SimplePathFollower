@@ -26,13 +26,13 @@ static const char* simplepathfollower_spec[] =
 	"lang_type",         "compile",
 	// Configuration variables
 	"conf.default.debug", "0",
-	"conf.default.directionToTranslationGain", "2.0",
+	"conf.default.directionToTranslationGain", "1.0",
 	"conf.default.distanceToTranslationGain", "2.0",
-	"conf.default.directionToRotationGain", "2.5",
+	"conf.default.directionToRotationGain", "1.0",
 	"conf.default.distanceToRotationGain", "2.5",
 	"conf.default.approachDistanceGain", "0.5",
-	"conf.default.approachDirectionGain", "0.5",
-	"conf.default.maxVelocity", "0.5",
+	"conf.default.approachDirectionGain", "1.0",
+	"conf.default.maxVelocity", "0.8",
 	"conf.default.minVelocity", "0.2",
 	"conf.default.poseTimeout", "3.0",
 	// Widget
@@ -74,7 +74,7 @@ RTC::ReturnCode_t SimplePathFollower::onInitialize()
 	// Registration: InPort/OutPort/Service
 	// <rtc-template block="registration">
 	// Set InPort buffers
-	addInPort("path", m_pathIn);
+        //addInPort("path", m_pathIn);
 	addInPort("currentPose", m_currentPoseIn);
 	// Set OutPort buffer
 	addOutPort("velocity", m_velocityOut);
@@ -172,7 +172,7 @@ RTC::ReturnCode_t SimplePathFollower::onExecute(RTC::UniqueId ec_id)
 				m_distanceToRotationGain, m_directionToRotationGain,
 				m_approachDistanceGain, m_approachDirectionGain);
 
-			if (true) {
+			if (false) {
 				static int i = 0;
 				if(i++ % 30 == 0) {
 					std::cout << "[RTC::SimplePathFollower] Now Following." << std::endl;
@@ -201,7 +201,7 @@ RTC::ReturnCode_t SimplePathFollower::onExecute(RTC::UniqueId ec_id)
 
 			m_pathFollowerObj.getTargetVelocity(m_velocity.data);
 			
-			if (true) {
+			if (false) {
 				static int j = 0;
 				if(++j % 30 == 0) {
 					std::cout << "[RTC::SimplePathFollower] Target Velocity (" << m_velocity.data.vx << ", "

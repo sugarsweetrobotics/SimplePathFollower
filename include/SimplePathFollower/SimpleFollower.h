@@ -26,6 +26,7 @@ class SimpleFollower {
   float m_MaxRotationVelocity;
   float m_MinRotationVelocity;
   bool m_following;
+  bool m_approaching;
   bool m_goal;
   
   int m_StartPointIndex;
