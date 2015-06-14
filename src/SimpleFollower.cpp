@@ -316,7 +316,7 @@ FOLLOW_RESULT SimpleFollower::approachGoal(RTC::Pose2D& currentPose, RTC::Waypoi
 	while(deltaPose < -M_PI) deltaPose += 2 * M_PI;
 
 	FOLLOW_RESULT ret = FOLLOW_APPROACHINGTOGOAL;
-#ifdef DEBUG
+#ifdef DEBUG_GOAL
 	std::cout << "[SimpleFollower] Goal = " << goal.target.position.x << ", " << goal.target.position.y << ", " << goal.target.heading << std::endl;
 	std::cout << "[SimpleFollower] Curr = " << currentPose.position.x << ", " << currentPose.position.y << ", " << currentPose.heading << std::endl;
 	std::cout << "[SimpleFollower] Distance = " << distance << ", Direction = " << deltaPose <<  std::endl;
@@ -391,7 +391,7 @@ FOLLOW_RESULT SimpleFollower::approachGoal(RTC::Pose2D& currentPose, RTC::Waypoi
 	m_targetVelocity.vy = 0;
 	m_targetVelocity.va = rotVelocity;
 
-#ifdef DEBUG
+#ifdef DEBUG_GOAL
 	std::cout << "[SimpleFollower] Vel  = " << m_targetVelocity.vx << ", " << m_targetVelocity.vy << ", " << m_targetVelocity.va << std::endl;
 #endif
 	return ret;
