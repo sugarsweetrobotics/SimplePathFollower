@@ -7,6 +7,7 @@
 * $Id$
 */
 
+#include <stdio.h>
 #include "SimplePathFollower.h"
 
 // Module specification
@@ -131,7 +132,7 @@ return RTC::RTC_OK;
 
 RTC::ReturnCode_t SimplePathFollower::onActivated(RTC::UniqueId ec_id)
 {
-	m_poseUpdated = FALSE;
+	m_poseUpdated = false;
 	m_Mode = MODE_NORMAL;
 	m_pathFollowerObj.stopFollow();
 	m_lastReceivedTime = coil::gettimeofday();
@@ -151,7 +152,7 @@ RTC::ReturnCode_t SimplePathFollower::onExecute(RTC::UniqueId ec_id)
 	coil::TimeValue currentTime = coil::gettimeofday();
 	if (m_currentPoseIn.isNew()) {
 		m_currentPoseIn.read();
-		m_poseUpdated = TRUE;
+		m_poseUpdated = true;
 
 		m_lastReceivedTime = currentTime;
 	} else {
@@ -187,7 +188,7 @@ RTC::ReturnCode_t SimplePathFollower::onExecute(RTC::UniqueId ec_id)
 			m_pathFollowerObj.setCurrentPose(m_currentPose.data);
 			FOLLOW_RESULT ret = m_pathFollowerObj.follow();
 
-			if (ret == FOLLOW_RESULT::FOLLOW_DISTANCEOUTOFRANGE) {
+			if (ret == FOLLOW_DISTANCEOUTOFRANGE) {
 				m_Mode = MODE_OUTOFRANGE;
 				m_pathFollowerObj.stopFollow();
 			}
@@ -212,7 +213,7 @@ RTC::ReturnCode_t SimplePathFollower::onExecute(RTC::UniqueId ec_id)
 			}
 			setTimestamp(m_velocity);
 			m_velocityOut.write();
-			m_poseUpdated = FALSE;
+			m_poseUpdated = false;
 		}
 	}
 

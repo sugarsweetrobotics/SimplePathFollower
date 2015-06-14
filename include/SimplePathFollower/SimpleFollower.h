@@ -69,7 +69,7 @@ class SimpleFollower {
   }
 
  private:
-  void SimpleFollower::updateReferenceLine();
+  void updateReferenceLine();
 
 
 };

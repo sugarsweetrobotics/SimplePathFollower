@@ -47,10 +47,10 @@ RTC::RETURN_VALUE PathFollowerSVC_impl::followPath(const RTC::Path2D& path)
 
 			if (m_pRTC->getMode() == MODE_TIMEOUT) {
 				std::cout << "[RTC::SimplePathFollower] Current Pose Timeout" << std::endl;
-				return RTC::RETURN_VALUE::RETVAL_ODOMETRY_TIME_OUT;
+				return RTC::RETVAL_ODOMETRY_TIME_OUT;
 			} else if (m_pRTC->getMode() == MODE_OUTOFRANGE) {
 				std::cout << "[RTC::SimplePathFollower] OutOfRange" << std::endl;
-				return RTC::RETURN_VALUE::RETVAL_OUTOF_RANGE;
+				return RTC::RETVAL_OUTOF_RANGE;
 			}
 
 		}
